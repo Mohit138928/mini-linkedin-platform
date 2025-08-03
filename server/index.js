@@ -12,7 +12,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://mini-linkedin-platform.vercel.app/", // Add your Vercel URL here later
+      "https://mini-linkedin-platform.vercel.app", // Add your Vercel URL here later
       /\.vercel\.app$/, // Allow all Vercel preview deployments
     ],
     credentials: true,
