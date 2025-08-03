@@ -14,14 +14,15 @@ import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { Textarea } from "@/components/Textarea";
 import { LoadingSpinner } from "@/components/LoadingComponents";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    bio: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const { user } = useAuth();
@@ -51,7 +52,6 @@ export default function RegisterPage() {
           firebaseUid: user.uid,
           email: user.email,
           name: user.displayName || formData.name || "",
-          bio: formData.bio || "",
         }),
       });
     } catch (error) {
@@ -182,31 +182,29 @@ export default function RegisterPage() {
                 >
                   Password
                 </label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  placeholder="Enter your password"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="bio"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Bio (optional)
-                </label>
-                <Textarea
-                  id="bio"
-                  name="bio"
-                  value={formData.bio}
-                  onChange={handleChange}
-                  placeholder="Tell us about yourself"
-                  rows={3}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    placeholder="Enter your password"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    )}
+                  </button>
+                </div>
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Creating account..." : "Create account"}
