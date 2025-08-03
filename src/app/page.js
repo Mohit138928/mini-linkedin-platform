@@ -20,7 +20,6 @@ import {
   Globe,
 } from "lucide-react";
 
-
 export default function Home() {
   const { user, loading } = useAuth();
 
@@ -37,11 +36,11 @@ export default function Home() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative overflow-hidden">
         {/* Hero Section */}
-        <section className="relative overflow-hidden">
+        <section className="relative overflow-hidden ">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
-          <div className="container mx-auto px-4 pt-20 pb-32">
+          <div className="container mx-auto px-4 pt-20 pb-32  max-w-7xl">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <motion.div
                 initial={{ opacity: 0, x: -50 }}
@@ -68,31 +67,28 @@ export default function Home() {
                     discover opportunities that shape your career journey.
                   </motion.p>
                 </div>
-          
-                 <motion.div
+
+                <motion.div
                   className="flex flex-col sm:flex-row gap-4"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6, duration: 0.8 }}
                 >
-                <Link href="/auth/register">
                   <Button
                     size="lg"
-                    className="group bg-gradient-to-bl from-[#f7f5b2] via-[#bad4f9] to-[#5e89ef] px-8 py-4 text-lg text-gray-600 hover:from-[#f5f3a8] hover:via-[#a8d0f7] hover:to-[#4a7ce8] transition-all duration-300 cursor-pointer"
+                    className="bg-gradient-to-bl from-[#f7f5b2] via-[#bad4f9] to-[#5e89ef] px-8 py-4 text-lg text-gray-600 hover:from-[#f5f3a8] hover:via-[#a8d0f7] hover:to-[#4a7ce8] cursor-pointer"
                   >
-                    Join now - it&apos;s free
-                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                    <Link href="/auth/register"><span className="font-semibold">Join now - it&apos;s free</span></Link>
+                    <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform font-semibold" />
                   </Button>
-                  </Link>
-                  <Link href="/auth/login">
+
                   <Button
                     variant="outline"
                     size="lg"
-                    className="px-8 py-4 text-lg text-gray-900 border-2 hover:bg-gray-50 transition-all duration-300 cursor-pointer"
+                    className="px-8 py-4 text-lg text-gray-900 border-2 hover:bg-gray-50 cursor-pointer"
                   >
-                    Sign in
+                    <Link href="/auth/login"><span className="font-semibold">Sign in</span></Link>
                   </Button>
-                  </Link>
                 </motion.div>
 
                 <motion.div
@@ -178,7 +174,7 @@ export default function Home() {
 
         {/* Features Section */}
         <section className="py-24 bg-white">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4  max-w-7xl">
             <motion.div
               className="text-center mb-16"
               initial={{ opacity: 0, y: 30 }}
@@ -253,7 +249,7 @@ export default function Home() {
 
         {/* Stats Section */}
         <section className="py-24 bg-gradient-to-r from-[#eeeeee] via-[#efefef] to-[#b4b4b4]">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 max-w-7xl ">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center text-black">
               {[
                 { number: "1M+", label: "Active Users" },
@@ -280,7 +276,7 @@ export default function Home() {
 
         {/* CTA Section */}
         <section className="py-24 bg-gray-50">
-          <div className="container mx-auto px-4 text-center">
+          <div className="container mx-auto px-4 text-center  max-w-7xl">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -326,36 +322,36 @@ export default function Home() {
   }
 
   return (
-      <div className="min-h-screen bg-white">
-        <div className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">
-            {/* Left Sidebar - Hidden on mobile and tablet, visible on large screens */}
-            <div className="hidden lg:block lg:col-span-3">
-              <div className="sticky top-6">
-                <LeftSidebar />
-              </div>
+    <div className="min-h-screen bg-white">
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 max-w-7xl mx-auto">
+          {/* Left Sidebar - Hidden on mobile and tablet, visible on large screens */}
+          <div className="hidden lg:block lg:col-span-3">
+            <div className="sticky top-6">
+              <LeftSidebar />
             </div>
+          </div>
 
-            {/* Main Content - Full width on mobile/tablet, reduced width on large screens */}
-            <div className="col-span-1 lg:col-span-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="space-y-6"
-              >
-                <PostFeed />
-              </motion.div>
-            </div>
+          {/* Main Content - Full width on mobile/tablet, reduced width on large screens */}
+          <div className="col-span-1 lg:col-span-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="space-y-6"
+            >
+              <PostFeed />
+            </motion.div>
+          </div>
 
-            {/* Right Sidebar - Hidden on mobile and tablet, visible on large screens */}
-            <div className="hidden lg:block lg:col-span-3">
-              <div className="sticky top-6">
-                <RightSidebar />
-              </div>
+          {/* Right Sidebar - Hidden on mobile and tablet, visible on large screens */}
+          <div className="hidden lg:block lg:col-span-3">
+            <div className="sticky top-6">
+              <RightSidebar />
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 }

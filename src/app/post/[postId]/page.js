@@ -189,9 +189,9 @@ export default function PostPage({ params }) {
               variant="outline"
               size="sm"
               onClick={handleShare}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 text-black"
             >
-              <Share className="h-4 w-4" />
+              <Share className="h-4 w-4 text-black" />
               <span>Share</span>
             </Button>
 
@@ -199,9 +199,9 @@ export default function PostPage({ params }) {
               variant="outline"
               size="sm"
               onClick={handleSend}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 text-black"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-4 w-4 text-black" />
               <span>Send</span>
             </Button>
           </div>
