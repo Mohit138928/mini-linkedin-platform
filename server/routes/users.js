@@ -25,6 +25,50 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/search", async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    // console.log("User search query:", q); // Debug log
+
+    if (!q || q.trim().length < 2) {
+      return res.json([]);
+    }
+
+    const searchQuery = q.trim();
+    // console.log("Searching for users with name containing:", searchQuery);
+
+    // Search users by name (case-insensitive)
+    const users = await User.find({
+      name: { $regex: searchQuery, $options: "i" },
+    })
+      .select("firebaseUid name headline bio profilePicture")
+      .limit(10);
+
+    // console.log(`Found ${users.length} users:`, users.map((u) => u.name));
+    res.json(users);
+  } catch (error) {
+    console.error("Error searching users:", error);
+    res.status(500).json({ message: "Failed to search users" });
+  }
+});
+
+// Debug route for temporary use
+// This route is for debugging purposes only and should not be used in production
+router.get("/debug/all", async (req, res) => {
+  try {
+    const users = await User.find({}).select("name firebaseUid").limit(5);
+    // console.log("All users in database:", users);
+    res.json({
+      count: users.length,
+      users: users,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+});
+
 // Get user profile
 router.get("/:firebaseUid", async (req, res) => {
   try {

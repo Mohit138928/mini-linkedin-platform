@@ -17,6 +17,35 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Search posts by content
+router.get("/search", async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    // console.log("Post search query:", q); // Debug log
+
+    if (!q || q.trim().length < 2) {
+      return res.json([]);
+    }
+
+    const searchQuery = q.trim();
+    // console.log("Searching for posts with content containing:", searchQuery);
+
+    // Search posts by content (case-insensitive)
+    const posts = await Post.find({
+      content: { $regex: searchQuery, $options: "i" },
+    })
+      .sort({ timestamp: -1 })
+      .limit(10);
+
+    // console.log(`Found ${posts.length} posts`);
+    res.json(posts);
+  } catch (error) {
+    console.error("Error searching posts:", error);
+    res.status(500).json({ message: "Failed to search posts" });
+  }
+});
+
 // Get single post by postId
 router.get("/:postId", async (req, res) => {
   try {

@@ -59,6 +59,12 @@ Experience the platform: [Mini-Linkedin-Platform](https://mini-linkedin-platform
 - Mobile-responsive layout
 - Dark mode support
 
+### ✅ Search Functionality
+- Modern UI built with Tailwind CSS and Lucide icons
+- Mobile Responsive
+- Search Peaple, Post
+- Particular Search page
+
 ## 🛠 Tech Stack
 
 ### Frontend
@@ -184,8 +190,10 @@ mini-linkedin-platform/
 │   │   │   │   ├── route.js      # Create/list users
 │   │   │   │   └── [id]/         # User profile routes
 │   │   │   │       └── route.js
-│   │   │   └── test-connection/  # API health check
-│   │   │       └── route.js
+│   │   │   |── test-connection/  # API health check
+│   │   │   |   └── route.js
+|   |   |   └── search/
+|   |   |       └──route.js       # APi Search functionality
 │   │   ├── auth/                 # Authentication pages
 │   │   │   ├── login/
 │   │   │   │   └── page.js       # Login page
@@ -215,9 +223,12 @@ mini-linkedin-platform/
 │   │   ├── Navbar.jsx            # Navigation bar
 │   │   ├── PostCard.jsx          # Post display card
 │   │   ├── PostFeed.jsx          # Posts feed container
-│   │   └── Textarea.jsx          # Textarea component
+│   │   ├── Textarea.jsx          # Textarea component
+|   |   └── SearchResults.jsx     # Search Result Shown
 │   ├── context/                  # React Context providers
 │   │   └── AuthContext.js        # Authentication context
+|   ├── hooks                     # Reach Hooks provider
+|   |   └──useDebounce.js         # Prevent Excessive API calls
 │   └── lib/                      # Utility libraries
 │       ├── firebase.js           # Firebase configuration
 │       ├── realtime.js           # Real-time polling utilities
@@ -256,6 +267,7 @@ mini-linkedin-platform/
 - `POST /api/users` - Create/update user profile
 - `PUT /api/users/:firebaseUid` - Update user profile
 - `POST /api/users/complete-profile` - Complete user profile
+- `GET /api/users/search` - Search Result User
 
 ### Posts
 - `GET /api/posts` - Get all posts

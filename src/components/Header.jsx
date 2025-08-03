@@ -5,6 +5,8 @@ import { useAuth } from "@/context/AuthContext";
 import { Button } from "./Button";
 import { Input } from "./Input";
 import { getInitials } from "@/lib/utils";
+import { SearchResults } from "./SearchResults";
+import { useDebounce } from "@/hooks/useDebounce";
 import {
   Search,
   Home,
@@ -25,11 +27,19 @@ export function Header() {
   const { user, logout } = useAuth();
   const [currentProfile, setCurrentProfile] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  // Add search-related states
+  const [searchResults, setSearchResults] = useState(null);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [notificationCount, setNotificationCount] = useState(3);
   const [messageCount, setMessageCount] = useState(2);
   const dropdownRef = useRef(null);
+  const searchRef = useRef(null); // Add search ref
+
+  // Debounce search query
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   useEffect(() => {
     const fetchCurrentProfile = async () => {
@@ -49,22 +59,57 @@ export function Header() {
     fetchCurrentProfile();
   }, [user]);
 
+  // Add search functionality
+  useEffect(() => {
+    const performSearch = async () => {
+      if (debouncedSearchQuery.trim().length < 2) {
+        setSearchResults(null);
+        setShowSearchResults(false);
+        setSearchLoading(false);
+        return;
+      }
+
+      setSearchLoading(true);
+      try {
+        const response = await fetch(
+          `/api/search?q=${encodeURIComponent(debouncedSearchQuery)}`
+        );
+        if (response.ok) {
+          const results = await response.json();
+          setSearchResults(results);
+          setShowSearchResults(true);
+        }
+      } catch (error) {
+        console.error("Search error:", error);
+        setSearchResults(null);
+      } finally {
+        setSearchLoading(false);
+      }
+    };
+
+    performSearch();
+  }, [debouncedSearchQuery]);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsProfileDropdownOpen(false);
       }
+      // Add search results close functionality
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearchResults(false);
+      }
     };
 
-    if (isProfileDropdownOpen) {
+    if (isProfileDropdownOpen || showSearchResults) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isProfileDropdownOpen]);
+  }, [isProfileDropdownOpen, showSearchResults]);
 
   // Close mobile menu when window is resized to desktop
   useEffect(() => {
@@ -76,6 +121,19 @@ export function Header() {
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Add escape key handler for search
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setShowSearchResults(false);
+        setSearchQuery("");
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, []);
 
   const handleLogout = async () => {
@@ -93,6 +151,32 @@ export function Header() {
 
   const toggleProfileDropdown = () => {
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  };
+
+  // Add search handlers
+  const handleSearchInputChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    // Show loading state immediately if user is typing
+    if (value.trim().length >= 2) {
+      setSearchLoading(true);
+    }
+  };
+
+  const handleSearchFocus = () => {
+    if (searchQuery.trim().length >= 2 && searchResults) {
+      setShowSearchResults(true);
+    }
+  };
+
+  const closeSearchResults = () => {
+    setShowSearchResults(false);
+  };
+
+  const clearSearch = () => {
+    setSearchQuery("");
+    setShowSearchResults(false);
   };
 
   const navItems = [
@@ -122,32 +206,56 @@ export function Header() {
             {/* Logo */}
             <div className="flex items-center flex-shrink-0">
               <Link href="/" className="flex items-center space-x-3 group">
-                {/* <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-105">
-                  <span className="text-white font-bold text-lg">M.Li</span>
-                </div> */}
                 <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-200 group-hover:scale-105">
-                                      <Users className="h-5 w-5 text-white" />
-                                    </div>
+                  <Users className="h-5 w-5 text-white" />
+                </div>
                 <span className="hidden sm:block font-bold text-xl text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
                   Mini LinkedIn
                 </span>
               </Link>
             </div>
 
-            {/* Search Bar - Desktop & Mobile */}
-            <div className="flex-1 max-w-2xl mx-4 lg:mx-8">
+            {/* Search Bar - Desktop & Mobile with added functionality */}
+            <div
+              className="flex-1 max-w-2xl mx-4 lg:mx-8 relative"
+              ref={searchRef}
+            >
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-200" />
+                  <Search
+                    className={`h-5 w-5 transition-colors duration-200 ${
+                      searchLoading
+                        ? "text-blue-500 animate-pulse"
+                        : "text-gray-400 group-focus-within:text-blue-500"
+                    }`}
+                  />
                 </div>
                 <input
                   type="text"
                   placeholder="Search for people, jobs, companies..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="block w-full pl-12 pr-4 py-3 bg-gray-50 border-0 rounded-full text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg"
+                  onChange={handleSearchInputChange}
+                  onFocus={handleSearchFocus}
+                  className="block w-full pl-12 pr-12 py-3 bg-gray-50 border-0 rounded-full text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 shadow-sm hover:shadow-md focus:shadow-lg text-black"
                 />
+                {searchQuery && (
+                  <button
+                    onClick={clearSearch}
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
+
+              {/* Search Results */}
+              <SearchResults
+                results={searchResults}
+                isVisible={showSearchResults}
+                onClose={closeSearchResults}
+                searchQuery={searchQuery}
+                loading={searchLoading}
+              />
             </div>
 
             {/* Desktop Navigation */}

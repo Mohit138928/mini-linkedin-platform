@@ -23,3 +23,19 @@ export function getInitials(name) {
     .toUpperCase()
     .slice(0, 2);
 }
+
+export function formatTimeAgo(timestamp) {
+  if (!timestamp) return "";
+  
+  const now = new Date();
+  const time = new Date(timestamp);
+  const diffInMs = now - time;
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInDays > 0) return `${diffInDays}d`;
+  if (diffInHours > 0) return `${diffInHours}h`;
+  if (diffInMinutes > 0) return `${diffInMinutes}m`;
+  return "now";
+}

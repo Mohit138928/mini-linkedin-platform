@@ -60,9 +60,9 @@ const connectDB = async () => {
       useUnifiedTopology: true,
     });
 
-    console.log("✅ MongoDB connected successfully");
+    console.log("MongoDB connected successfully");
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error.message);
+    console.error("MongoDB connection error:", error.message);
     // Don't exit process in production, let Render handle restarts
     if (process.env.NODE_ENV !== "production") {
       process.exit(1);
@@ -73,14 +73,14 @@ const connectDB = async () => {
 
 // Handle MongoDB connection events
 mongoose.connection.on("disconnected", () => {
-  console.log("⚠️ MongoDB disconnected. Attempting to reconnect...");
+  console.log("MongoDB disconnected. Attempting to reconnect...");
   if (process.env.NODE_ENV === "production") {
     connectDB();
   }
 });
 
 mongoose.connection.on("error", (err) => {
-  console.error("❌ MongoDB error:", err);
+  console.error("MongoDB error:", err);
 });
 
 // Debug middleware to log all requests
@@ -91,38 +91,38 @@ app.use((req, res, next) => {
 
 // Routes with better error handling and debugging
 try {
-  console.log("📂 Loading route files...");
+  console.log("Loading route files...");
 
   // Load users router
   console.log("Loading users router...");
   const usersRouter = require("./routes/users");
-  console.log("✅ Users router loaded successfully");
+  console.log("Users router loaded successfully");
 
   // Load posts router
   console.log("Loading posts router...");
   const postsRouter = require("./routes/posts");
-  console.log("✅ Posts router loaded successfully");
+  console.log("Posts router loaded successfully");
 
   // Load upload router
   console.log("Loading upload router...");
   const uploadRouter = require("./routes/upload");
-  console.log("✅ Upload router loaded successfully");
+  console.log("Upload router loaded successfully");
 
   // Register routes
-  console.log("📌 Registering routes...");
+  console.log("Registering routes...");
   app.use("/api/users", usersRouter);
-  console.log("✅ Users routes registered at /api/users");
+  console.log("Users routes registered at /api/users");
 
   app.use("/api/posts", postsRouter);
-  console.log("✅ Posts routes registered at /api/posts");
+  console.log("Posts routes registered at /api/posts");
 
   app.use("/api/upload", uploadRouter);
-  console.log("✅ Upload routes registered at /api/upload");
+  console.log("Upload routes registered at /api/upload");
 
-  console.log("✅ All routes loaded and registered successfully");
+  console.log("All routes loaded and registered successfully");
 
   // List all registered routes for debugging
-  console.log("📋 Registered routes:");
+  console.log("Registered routes:");
   app._router.stack.forEach((middleware) => {
     if (middleware.route) {
       console.log(
@@ -141,13 +141,13 @@ try {
     }
   });
 } catch (error) {
-  console.error("❌ Error loading routes:", error);
+  console.error("Error loading routes:", error);
   console.error("Stack trace:", error.stack);
 }
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error("❌ Unhandled error:", err.stack);
+  console.error("Unhandled error:", err.stack);
   res.status(500).json({
     message: "Something went wrong!",
     error: process.env.NODE_ENV === "production" ? {} : err.stack,
@@ -156,7 +156,7 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use("*", (req, res) => {
-  console.log(`❌ 404 - Route not found: ${req.method} ${req.originalUrl}`);
+  console.log(`404 - Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
     message: "Route not found",
     path: req.originalUrl,
@@ -165,20 +165,28 @@ app.use("*", (req, res) => {
 });
 
 // Graceful shutdown handling
-process.on("SIGTERM", () => {
-  console.log("🔄 SIGTERM received. Shutting down gracefully...");
-  mongoose.connection.close(() => {
-    console.log("✅ MongoDB connection closed.");
-    process.exit(0);
-  });
+process.on("SIGTERM", async () => {
+  console.log("SIGTERM received. Shutting down gracefully...");
+  try {
+  await mongoose.connection.close();
+  console.log("MongoDB connection closed.");
+  process.exit(0);
+} catch (error) {
+  console.error("Error closing MongoDB connection:", error);
+  process.exit(1);
+}
 });
 
-process.on("SIGINT", () => {
-  console.log("🔄 SIGINT received. Shutting down gracefully...");
-  mongoose.connection.close(() => {
-    console.log("✅ MongoDB connection closed.");
-    process.exit(0);
-  });
+process.on("SIGINT", async () => {
+  console.log("SIGINT received. Shutting down gracefully...");
+  try {
+  await mongoose.connection.close();
+  console.log("MongoDB connection closed.");
+  process.exit(0);
+} catch (error) {
+  console.error("Error closing MongoDB connection:", error);
+  process.exit(1);
+}
 });
 
 // Connect to database
@@ -186,14 +194,14 @@ connectDB();
 
 // Start server
 const server = app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
-  console.log(`📊 Health check available at: http://localhost:${PORT}/health`);
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+  console.log(`Health check available at: http://localhost:${PORT}/health`);
 });
 
 // Handle server errors
 server.on("error", (error) => {
-  console.error("❌ Server error:", error);
+  console.error("Server error:", error);
 });
 
 module.exports = app;
