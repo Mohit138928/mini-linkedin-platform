@@ -4,7 +4,7 @@ A modern, full-stack social networking platform built with Next.js, React, Fireb
 
 ## 🌟 Live Demo
 
-Experience the platform: [Demo Link] (Add your deployment URL here)
+Experience the platform: [Demo Link](https://mini-linkedin-platform.vercel.app/)
 
 ## 📸 Screenshots
 
