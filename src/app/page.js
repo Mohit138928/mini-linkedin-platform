@@ -6,7 +6,8 @@ import { RightSidebar } from "@/components/RightSidebar";
 import Link from "next/link";
 import { Button } from "@/components/Button";
 import { Footer } from "@/components/Footer";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 import {
   ArrowRight,
   Users,
@@ -19,6 +20,58 @@ import {
   Zap,
   Globe,
 } from "lucide-react";
+
+// Animated Counter Component
+const AnimatedCounter = ({ value, duration = 2, suffix = "" }) => {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, threshold: 0.3 });
+
+  useEffect(() => {
+    if (!isInView) return;
+
+    // Parse the numeric value from strings like "1M+", "50K+", etc.
+    const numericValue = parseFloat(value.replace(/[^\d.]/g, ''));
+    const multiplier = value.includes('M') ? 1000000 : 
+                     value.includes('K') ? 1000 : 1;
+    const targetValue = numericValue * multiplier;
+
+    let startTime;
+    const animate = (currentTime) => {
+      if (!startTime) startTime = currentTime;
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / (duration * 1000), 1);
+      
+      // Easing function for smooth animation
+      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+      const currentCount = Math.floor(targetValue * easeOutQuart);
+      
+      setCount(currentCount);
+      
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+    
+    requestAnimationFrame(animate);
+  }, [isInView, value, duration]);
+
+  // Format the displayed number
+  const formatNumber = (num) => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(0) + 'K';
+    }
+    return num.toString();
+  };
+
+  return (
+    <span ref={ref}>
+      {formatNumber(count)}{suffix}
+    </span>
+  );
+};
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -247,15 +300,15 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Stats Section */}
+        {/* Stats Section with Animated Counters */}
         <section className="py-24 bg-gradient-to-r from-[#eeeeee] via-[#efefef] to-[#b4b4b4]">
-          <div className="container mx-auto px-4 max-w-7xl ">
+          <div className="container mx-auto px-4 max-w-7xl">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center text-black">
               {[
-                { number: "1M+", label: "Active Users" },
-                { number: "50K+", label: "Companies" },
-                { number: "100K+", label: "Daily Posts" },
-                { number: "5M+", label: "Connections Made" },
+                { number: "1M+", label: "Active Users", duration: 2.5 },
+                { number: "50K+", label: "Companies", duration: 2.0 },
+                { number: "100K+", label: "Daily Posts", duration: 2.8 },
+                { number: "5M+", label: "Connections Made", duration: 3.0 },
               ].map((stat, index) => (
                 <motion.div
                   key={index}
@@ -263,11 +316,28 @@ export default function Home() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
+                  className="group"
                 >
-                  <div className="text-4xl lg:text-5xl font-bold mb-2">
-                    {stat.number}
-                  </div>
-                  <div className="text-gray-400">{stat.label}</div>
+                  <motion.div 
+                    className="text-4xl lg:text-5xl font-bold mb-2 text-gray-900 bg-clip-text"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <AnimatedCounter 
+                      value={stat.number} 
+                      duration={stat.duration}
+                      suffix={stat.number.includes('+') ? '+' : ''}
+                    />
+                  </motion.div>
+                  <motion.div 
+                    className="text-gray-600 font-medium"
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: (index * 0.1) + 0.3 }}
+                    viewport={{ once: true }}
+                  >
+                    {stat.label}
+                  </motion.div>
                 </motion.div>
               ))}
             </div>
