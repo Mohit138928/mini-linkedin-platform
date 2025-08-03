@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require("path");
 require("dotenv").config();
 
 const app = express();
@@ -11,7 +12,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://your-app.vercel.app", // Add your Vercel URL here later
+      "https://mini-linkedin-platform.vercel.app/", // Add your Vercel URL here later
       /\.vercel\.app$/, // Allow all Vercel preview deployments
     ],
     credentials: true,
@@ -82,10 +83,20 @@ mongoose.connection.on("error", (err) => {
   console.error("❌ MongoDB error:", err);
 });
 
-// Routes
-app.use("/api/users", require("./routes/users"));
-app.use("/api/posts", require("./routes/posts"));
-app.use("/api/upload", require("./routes/upload"));
+// Routes with better error handling
+try {
+  const usersRouter = require("./routes/users");
+  const postsRouter = require("./routes/posts");
+  const uploadRouter = require("./routes/upload");
+
+  app.use("/api/users", usersRouter);
+  app.use("/api/posts", postsRouter);
+  app.use("/api/upload", uploadRouter);
+
+  console.log("✅ Routes loaded successfully");
+} catch (error) {
+  console.error("❌ Error loading routes:", error);
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
