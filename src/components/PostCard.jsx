@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, CardContent } from "./Card";
 import { Button } from "./Button";
 import { Input } from "./Input";
+import { MediaCarousel } from "./MediaCarousel";
 import { formatDate, getInitials } from "@/lib/utils";
 import { createPollingInterval, clearPollingInterval } from "@/lib/realtime";
 import { useState, useEffect, useRef } from "react";
@@ -543,81 +544,6 @@ export function PostCard({
     }
   };
 
-  const renderMedia = () => {
-    if (!post.media || post.media.length === 0) return null;
-
-    return (
-      <div className="px-4 pb-3">
-        <div className="space-y-3">
-          {post.media.map((item, index) => (
-            <div key={index} className="rounded-lg overflow-hidden">
-              {item.type === "image" && (
-                <img
-                  src={item.url}
-                  alt={item.name}
-                  className="w-full max-h-96 object-cover cursor-pointer hover:opacity-95 transition-opacity"
-                  onClick={() => openMediaModal(item)}
-                />
-              )}
-              {item.type === "video" && (
-                <div className="relative">
-                  <video
-                    src={item.url}
-                    className="w-full max-h-96 object-cover cursor-pointer"
-                    controls
-                    poster=""
-                    onClick={() => openMediaModal(item)}
-                  />
-                </div>
-              )}
-              {item.type === "document" && (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                        {getDocumentIcon(item.name)}
-                      </div>
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-900">
-                          {item.name}
-                        </h4>
-                        <p className="text-xs text-gray-500">Document</p>
-                        {item.size && (
-                          <p className="text-xs text-gray-400">
-                            {(item.size / 1024).toFixed(1)} KB
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => openMediaModal(item)}
-                        className="flex items-center space-x-1"
-                      >
-                        <FileText className="h-4 w-4" />
-                        <span>Preview</span>
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => window.open(item.url, "_blank")}
-                        className="flex items-center space-x-1"
-                      >
-                        <Download className="h-4 w-4" />
-                        <span>Download</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
   return (
     <Card className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
       <CardContent className="p-0">
@@ -762,8 +688,16 @@ export function PostCard({
           )}
         </div>
 
-        {/* Media */}
-        {renderMedia()}
+        {/* Media - Using MediaCarousel */}
+        {post.media && post.media.length > 0 && (
+          <div className="px-4 pb-3">
+            <MediaCarousel
+              media={post.media}
+              onMediaClick={openMediaModal}
+              className="rounded-lg overflow-hidden"
+            />
+          </div>
+        )}
 
         {/* Engagement Stats */}
         <div className="px-4 py-2 border-t border-gray-100">

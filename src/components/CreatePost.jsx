@@ -122,7 +122,7 @@ export function CreatePost({ onPostCreated }) {
           const data = await response.json();
           const mediaItem = {
             type,
-            id: Date.now(),
+            id: Date.now() + Math.random(),
             url: data.url,
             name: data.fileName || file.name,
             publicId: data.publicId,
