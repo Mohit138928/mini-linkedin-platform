@@ -3,11 +3,25 @@ const router = express.Router();
 const multer = require("multer");
 const cloudinary = require("../config/cloudinary");
 
-// Test endpoint
+// Test endpoint - this should already exist
 router.get("/test", (req, res) => {
   res.json({
     message: "Upload route is working!",
     cloudinaryConfigured: !!cloudinary.config().cloud_name,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Simple health check for upload router
+router.get("/", (req, res) => {
+  res.json({
+    message: "Upload API is running",
+    endpoints: {
+      test: "/api/upload/test",
+      general: "/api/upload (POST)",
+      profilePicture: "/api/upload/profile-picture (POST)",
+      postImage: "/api/upload/post-image (POST)"
+    }
   });
 });
 

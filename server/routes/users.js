@@ -2,6 +2,29 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 
+// Test route to verify router is working
+router.get("/test", (req, res) => {
+  res.json({
+    message: "Users router is working!",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Get all users (for testing)
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find({}).select("-__v");
+    res.json({
+      message: "Users fetched successfully",
+      count: users.length,
+      users: users,
+    });
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Get user profile
 router.get("/:firebaseUid", async (req, res) => {
   try {

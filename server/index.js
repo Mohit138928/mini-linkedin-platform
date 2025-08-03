@@ -83,19 +83,66 @@ mongoose.connection.on("error", (err) => {
   console.error("❌ MongoDB error:", err);
 });
 
-// Routes with better error handling
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path} - ${new Date().toISOString()}`);
+  next();
+});
+
+// Routes with better error handling and debugging
 try {
+  console.log("📂 Loading route files...");
+
+  // Load users router
+  console.log("Loading users router...");
   const usersRouter = require("./routes/users");
+  console.log("✅ Users router loaded successfully");
+
+  // Load posts router
+  console.log("Loading posts router...");
   const postsRouter = require("./routes/posts");
+  console.log("✅ Posts router loaded successfully");
+
+  // Load upload router
+  console.log("Loading upload router...");
   const uploadRouter = require("./routes/upload");
+  console.log("✅ Upload router loaded successfully");
 
+  // Register routes
+  console.log("📌 Registering routes...");
   app.use("/api/users", usersRouter);
-  app.use("/api/posts", postsRouter);
-  app.use("/api/upload", uploadRouter);
+  console.log("✅ Users routes registered at /api/users");
 
-  console.log("✅ Routes loaded successfully");
+  app.use("/api/posts", postsRouter);
+  console.log("✅ Posts routes registered at /api/posts");
+
+  app.use("/api/upload", uploadRouter);
+  console.log("✅ Upload routes registered at /api/upload");
+
+  console.log("✅ All routes loaded and registered successfully");
+
+  // List all registered routes for debugging
+  console.log("📋 Registered routes:");
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      console.log(
+        `  ${Object.keys(middleware.route.methods)} ${middleware.route.path}`
+      );
+    } else if (middleware.name === "router") {
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) {
+          console.log(
+            `  ${Object.keys(handler.route.methods)} ${middleware.regexp.source
+              .replace("\\", "")
+              .replace("?", "")}${handler.route.path}`
+          );
+        }
+      });
+    }
+  });
 } catch (error) {
   console.error("❌ Error loading routes:", error);
+  console.error("Stack trace:", error.stack);
 }
 
 // Error handling middleware
@@ -109,9 +156,11 @@ app.use((err, req, res, next) => {
 
 // 404 handler
 app.use("*", (req, res) => {
+  console.log(`❌ 404 - Route not found: ${req.method} ${req.originalUrl}`);
   res.status(404).json({
     message: "Route not found",
     path: req.originalUrl,
+    method: req.method,
   });
 });
 
