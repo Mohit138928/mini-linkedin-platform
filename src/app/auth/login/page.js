@@ -103,7 +103,7 @@ export default function LoginPage() {
             firebaseUid: user.uid,
             email: user.email,
             name: user.displayName || "",
-            bio: "",
+            bio: user.bio || "",
           }),
         });
       } catch (profileError) {

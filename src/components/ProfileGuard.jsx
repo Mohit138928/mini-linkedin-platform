@@ -24,7 +24,6 @@ export function useProfileGuard() {
           const isComplete = !!(
             userData.name &&
             userData.headline &&
-            userData.bio &&
             userData.profilePicture &&
             userData.isProfileComplete === true
           );
