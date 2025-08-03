@@ -24,6 +24,10 @@ Experience the platform: [Demo Link] (Add your deployment URL here)
 ![Profile](./public/ProfilePage.png)
 *Comprehensive profile management and editing*
 
+### User Profile Page 
+![Profile](./public/OtherUserProfilePage.png)
+*Comprehensive profile page of the another user*
+
 ### Post Creation & Interaction
 ![Create Post](./public/PostUpload.png)
 *Rich post creation with media support and detailed post views*
@@ -64,6 +68,7 @@ Experience the platform: [Demo Link] (Add your deployment URL here)
 - **Shadcn UI** - High-quality UI components
 - **Lucide React** - Beautiful icons
 - **Lenis** - Smooth Scrolling
+- **Swiper** - Smooth swiper for media
 
 ### Backend
 - **Express.js** - Node.js web framework
@@ -150,68 +155,98 @@ npm start
 - Frontend: [http://localhost:3000](http://localhost:3000)
 - Backend API: [http://localhost:5000](http://localhost:5000)
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 mini-linkedin-platform/
-├── src/
-│   ├── app/                           # Next.js App Router
-│   │   ├── api/                       # API route handlers
-│   │   │   ├── posts/                 # Post-related API routes
-│   │   │   ├── users/                 # User-related API routes
-│   │   │   └── profile/               # Profile API routes
-│   │   ├── auth/                      # Authentication pages
-│   │   │   ├── login/                 # Login page
-│   │   │   └── register/              # Registration page
-│   │   ├── profile/                   # Profile pages
-│   │   │   ├── [id]/                  # Dynamic profile pages
-│   │   │   └── complete/              # Profile completion
-│   │   ├── post/                      # Individual post pages
-│   │   │   └── [postId]/              # Dynamic post detail
-│   │   ├── globals.css                # Global styles
-│   │   ├── layout.js                  # Root layout component
-│   │   └── page.js                    # Homepage
-│   ├── components/                    # React components
-│   │   ├── ui/                        # Base UI components
-│   │   ├── AuthContext.js             # Authentication context
-│   │   ├── Header.jsx                 # Navigation header
-│   │   ├── Footer.jsx                 # Site footer
-│   │   ├── PostCard.jsx               # Post display component
-│   │   ├── PostFeed.jsx               # Main feed component
-│   │   ├── CreatePost.jsx             # Post creation form
-│   │   ├── LeftSidebar.jsx            # Left sidebar component
-│   │   ├── RightSidebar.jsx           # Right sidebar component
-│   │   ├── LoadingScreen.jsx          # Loading animations
-│   │   └── ProfileGuard.jsx           # Route protection
-│   ├── context/                       # React contexts
-│   │   └── AuthContext.js             # Authentication state
-│   ├── lib/                          # Utility functions
-│   │   ├── firebase.js               # Firebase configuration
-│   │   ├── utils.js                  # Helper functions
-│   │   └── realtime.js               # Real-time polling
-│   └── styles/                       # Additional styles
-├── server/                           # Express.js backend
-│   ├── models/                       # MongoDB models
-│   │   ├── User.js                   # User model
-│   │   ├── Post.js                   # Post model
-│   │   └── Comment.js                # Comment model
-│   ├── routes/                       # API routes
-│   │   ├── users.js                  # User endpoints
-│   │   ├── posts.js                  # Post endpoints
-│   │   └── comments.js               # Comment endpoints
-│   ├── middleware/                   # Express middleware
-│   ├── uploads/                      # File upload directory
-│   ├── .env                         # Environment variables
-│   ├── index.js                     # Server entry point
-│   └── package.json                 # Backend dependencies
-├── public/                          # Static assets
-│   ├── screenshots/                 # Application screenshots
-│   └── favicon.ico                  # Site favicon
-├── .env.local                       # Frontend environment
-├── tailwind.config.js               # Tailwind configuration
-├── next.config.js                   # Next.js configuration
-├── package.json                     # Frontend dependencies
-└── README.md                        # Project documentation
+├── src/                          # Frontend source code
+│   ├── app/                      # Next.js App Router
+│   │   ├── api/                  # API route handlers
+│   │   │   ├── posts/            # Post-related API routes
+│   │   │   │   ├── route.js      # Create/fetch posts
+│   │   │   │   └── [id]/         # Dynamic post routes
+│   │   │   │       ├── route.js  # Get/update/delete specific post
+│   │   │   │       ├── comment/  # Comment management
+│   │   │   │       │   ├── route.js
+│   │   │   │       │   └── [commentId]/
+│   │   │   │       │       └── route.js
+│   │   │   │       ├── like/     # Like functionality
+│   │   │   │       │   └── route.js
+│   │   │   │       └── share/    # Share functionality
+│   │   │   │           └── route.js
+│   │   │   ├── upload/           # File upload API
+│   │   │   │   ├── route.js      # General file upload
+│   │   │   │   ├── profile-picture/
+│   │   │   │   │   └── route.js
+│   │   │   │   └── post-image/
+│   │   │   │       └── route.js
+│   │   │   ├── users/            # User management API
+│   │   │   │   ├── route.js      # Create/list users
+│   │   │   │   └── [id]/         # User profile routes
+│   │   │   │       └── route.js
+│   │   │   └── test-connection/  # API health check
+│   │   │       └── route.js
+│   │   ├── auth/                 # Authentication pages
+│   │   │   ├── login/
+│   │   │   │   └── page.js       # Login page
+│   │   │   └── register/
+│   │   │       └── page.js       # Registration page
+│   │   ├── post/                 # Post detail pages
+│   │   │   └── [id]/
+│   │   │       └── page.js       # Individual post view
+│   │   ├── profile/              # Profile pages
+│   │   │   ├── complete/
+│   │   │   │   └── page.js       # Profile completion
+│   │   │   └── [id]/
+│   │   │       └── page.js       # User profile view
+│   │   ├── favicon.ico           # Favicon
+│   │   ├── globals.css           # Global styles
+│   │   ├── layout.js             # Root layout
+│   │   ├── loading.js            # Loading UI
+│   │   ├── not-found.js          # 404 page
+│   │   └── page.js               # Home page (feed)
+│   ├── components/               # Reusable React components
+│   │   ├── Button.jsx            # Button component
+│   │   ├── Card.jsx              # Card components
+│   │   ├── CreatePost.jsx        # Post creation form
+│   │   ├── Input.jsx             # Input component
+│   │   ├── LoadingComponents.jsx # Loading states
+│   │   ├── MediaCarousel.jsx     # Media swiper component
+│   │   ├── Navbar.jsx            # Navigation bar
+│   │   ├── PostCard.jsx          # Post display card
+│   │   ├── PostFeed.jsx          # Posts feed container
+│   │   └── Textarea.jsx          # Textarea component
+│   ├── context/                  # React Context providers
+│   │   └── AuthContext.js        # Authentication context
+│   └── lib/                      # Utility libraries
+│       ├── firebase.js           # Firebase configuration
+│       ├── realtime.js           # Real-time polling utilities
+│       └── utils.js              # General utilities
+├── server/                       # Backend Express.js application
+│   ├── config/                   # Configuration files
+│   │   └── cloudinary.js         # Cloudinary setup
+│   ├── models/                   # MongoDB models
+│   │   ├── Post.js               # Post schema
+│   │   └── User.js               # User schema
+│   ├── routes/                   # Express route handlers
+│   │   ├── posts.js              # Post-related routes
+│   │   ├── upload.js             # File upload routes
+│   │   └── users.js              # User-related routes
+│   ├── index.js                  # Express server entry point
+│   └── package.json              # Backend dependencies
+├── public/                       # Static assets
+│   ├── next.svg                  # Next.js logo
+│   └── vercel.svg                # Vercel logo
+├── .env.local                    # Environment variables (local)
+├── .env.example                  # Environment variables template
+├── .gitignore                    # Git ignore rules
+├── README.md                     # Project documentation
+├── components.json               # Shadcn/ui configuration
+├── jsconfig.json                 # JavaScript configuration
+├── next.config.js                # Next.js configuration
+├── package.json                  # Frontend dependencies
+├── postcss.config.js             # PostCSS configuration
+└── tailwind.config.js            # Tailwind CSS configuration
 ```
 
 ## 🔗 API Endpoints
@@ -285,10 +320,7 @@ mini-linkedin-platform/
 ## 🔄 Future Enhancements
 
 ### Planned Features
-- **Commenting System** - Add comments to posts
-- **Like/Reaction System** - Engage with posts
 - **User Connections** - Follow/connect with other users
-- **Image Upload** - Support for image posts and profile pictures
 - **Real-time Notifications** - Live updates for interactions
 - **Advanced Search** - Search users and posts
 - **Professional Features** - Job postings, company pages
@@ -309,7 +341,7 @@ mini-linkedin-platform/
 4. Push to the branch (`git push origin feature/new-feature`)
 5. Create a Pull Request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 

@@ -105,8 +105,8 @@ export function MediaCarousel({ media, onMediaClick, className = "" }) {
         spaceBetween={0}
         slidesPerView={1}
         navigation={{
-          prevEl: `.swiper-button-prev-${media[0].id || 'default'}`,
-          nextEl: `.swiper-button-next-${media[0].id || 'default'}`,
+          prevEl: `.swiper-button-prev-${media[0].id || "default"}`,
+          nextEl: `.swiper-button-next-${media[0].id || "default"}`,
         }}
         pagination={{
           clickable: true,
@@ -176,12 +176,16 @@ export function MediaCarousel({ media, onMediaClick, className = "" }) {
 
         {/* Custom Navigation Buttons */}
         <div
-          className={`swiper-button-prev-${media[0].id || 'default'} absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full p-2 cursor-pointer transition-all`}
+          className={`swiper-button-prev-${
+            media[0].id || "default"
+          } absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full p-2 cursor-pointer transition-all`}
         >
           <ChevronLeft className="h-5 w-5 text-white" />
         </div>
         <div
-          className={`swiper-button-next-${media[0].id || 'default'} absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full p-2 cursor-pointer transition-all`}
+          className={`swiper-button-next-${
+            media[0].id || "default"
+          } absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full p-2 cursor-pointer transition-all`}
         >
           <ChevronRight className="h-5 w-5 text-white" />
         </div>
