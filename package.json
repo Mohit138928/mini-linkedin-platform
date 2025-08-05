@@ -11,6 +11,7 @@
     "server:install": "cd server && npm install"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.2.3",
     "@studio-freight/lenis": "^1.0.42",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
@@ -36,6 +37,7 @@
     "@tailwindcss/postcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "tw-animate-css": "^1.3.6"
   }
 }
